@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LockerRoom — Race Gear, Verified by Racers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="icon" type="image/png" href="assets/lockerroom-icon-512.png">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs><clipPath id="lrClipNav"><rect x="0" y="0" width="100" height="100" rx="24"/></clipPath></defs>
+        <g clip-path="url(#lrClipNav)">
+          <rect width="100" height="100" fill="#0A0B0D"/>
+          <polygon points="0,80 60,0 100,0 100,24 40,100 0,100" fill="#1E4FD6"/>
+          <circle cx="80" cy="20" r="6" fill="#FFFFFF"/>
+          <text x="42" y="70" font-family="Oswald, sans-serif" font-weight="700" font-size="48" fill="#FFFFFF" text-anchor="middle" letter-spacing="-1">LR</text>
+        </g>
+      </svg>
+      LockerRoom
+    </div>
+    <nav class="links">
+      <button data-view="home" class="navbtn active">Home</button>
+      <button data-view="browse" class="navbtn">Browse</button>
+      <button data-view="proof" class="navbtn">Proof Runs</button>
+      <button data-view="sell" class="navbtn">Sell</button>
+      <button onclick="openProfileModal()"><span id="profile-nav-label">Set Up Racer Profile</span></button>
+      <button onclick="openAuthModal()"><span id="auth-nav-label">Sign In</span></button>
+    </nav>
+    <button class="nav-cta" data-view="sell">List Your Gear</button>
+  </div>
+</header>
+
+<!-- ============ RACER PROFILE MODAL ============ -->
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Your Racer Profile</h3>
+      <button class="modal-close" onclick="closeProfileModal()" aria-label="Close">&times;</button>
+    </div>
+    <p class="modal-sub">This feeds the Fit Confidence engine — the more you fill in, the more listings it can score for you. Stored only in your browser for this prototype.</p>
+    <form onsubmit="submitProfile(event)">
+      <div class="modal-grid">
+        <div>
+          <label>Primary Discipline</label>
+          <select id="profile-discipline">
+            <option>Slalom</option>
+            <option>Giant Slalom</option>
+            <option>Super G</option>
+            <option>Downhill</option>
+          </select>
+        </div>
+        <div>
+          <label>Preferred Ski Length (cm)</label>
+          <input type="number" id="profile-length" placeholder="e.g. 165">
+        </div>
+        <div>
+          <label>Boot Last Width (mm)</label>
+          <input type="number" step="0.1" id="profile-lastwidth" placeholder="e.g. 97">
+        </div>
+        <div>
+          <label>Boot Flex Preference</label>
+          <input type="number" id="profile-flex" placeholder="e.g. 130">
+        </div>
+        <div>
+          <label>Chest (cm, for suits)</label>
+          <input type="number" id="profile-chest" placeholder="e.g. 96">
+        </div>
+        <div>
+          <label>Waist (cm, for suits)</label>
+          <input type="number" id="profile-waist" placeholder="e.g. 80">
+        </div>
+      </div>
+      <button class="btn btn-primary" type="submit" style="margin-top:18px; width:100%;">Save Profile</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ AUTH MODAL ============ -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal-box" style="max-width:400px;">
+    <div class="modal-head">
+      <h3>Sign In</h3>
+      <button class="modal-close" onclick="closeAuthModal()" aria-label="Close">&times;</button>
+    </div>
+    <p class="modal-sub">Sign in to save your racer profile to your account and publish real listings.</p>
+    <form id="auth-form">
+      <div>
+        <label>Email</label>
+        <input type="email" id="auth-email" placeholder="you@example.com" required>
+      </div>
+      <div style="margin-top:14px;">
+        <label>Password</label>
+        <input type="password" id="auth-password" placeholder="At least 6 characters" required minlength="6">
+      </div>
+      <div style="display:flex; gap:10px; margin-top:18px;">
+        <button type="button" class="btn btn-primary" style="flex:1;" onclick="handleAuthSubmit(event,'signin')">Sign In</button>
+        <button type="button" class="btn btn-ghost" style="flex:1; color:var(--navy); border-color:var(--frost);" onclick="handleAuthSubmit(event,'signup')">Create Account</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ HOME ============ -->
+<div class="view active" id="view-home">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <div class="eyebrow">Competitive ski racing gear, resold properly</div>
+        <h1 class="hero-h">Race gear resale,<br>built for<br><span class="accent">racers.</span></h1>
+        <p class="sub">The athlete-first marketplace for competitive ski racing gear — verified for fit, proven in action.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" data-view="browse">Browse Gear</button>
+          <button class="btn btn-ghost" data-view="sell">Sell Your Gear</button>
+        </div>
+      </div>
+      <div class="board">
+        <div class="board-head"><span>Recent Listings</span><span>Fit Score</span></div>
+        <div class="board-row"><div class="bib-num">04</div><div class="board-item"><b>Atomic Redster S9 165cm</b><span>GS · FIS Homologated</span></div><div class="board-score">92.4<small>FIT</small></div></div>
+        <div class="board-row"><div class="bib-num">11</div><div class="board-item"><b>Spyder Race Suit, Men's M</b><span>Slalom · 2024</span></div><div class="board-score">88.1<small>FIT</small></div></div>
+        <div class="board-row"><div class="bib-num">23</div><div class="board-item"><b>Lange RS 130 Boots</b><span>26.5 · 97mm Last</span></div><div class="board-score">95.7<small>FIT</small></div></div>
+        <div class="board-row"><div class="bib-num">30</div><div class="board-item"><b>Rossignol Hero Athlete FIS GS</b><span>188cm · 30m Radius</span></div><div class="board-score">90.3<small>FIT</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="fee-strip">
+    <div class="wrap">
+      <p>LOWER SELLER FEES THAN GENERALIST MARKETPLACES</p>
+      <div class="compare">
+        <div><div class="num">9%</div><div class="lbl">Individual Sellers</div></div>
+        <div><div class="num">5%</div><div class="lbl">Verified Teams &amp; Academies</div></div>
+        <div class="vs">vs</div>
+        <div><div class="num">13–15%</div><div class="lbl">Generalist Marketplaces</div></div>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">The AI Fit Confidence engine</div>
+        <h2>Know it fits before it ships.</h2>
+        <p>Racers waste money guessing. Enter your profile once — discipline, height, weight, boot last, suit measurements — and every listing shows a Fit Confidence score built for your body, not a generic size chart.</p>
+      </div>
+
+      <div class="fit-panel">
+        <div>
+          <h2>How the score is built</h2>
+          <p>Fit Confidence blends the seller's listed specs against your racer profile and gear-specific fit data — not just S/M/L.</p>
+          <ul class="fit-steps">
+            <li><span class="n">01</span><span>Build your racer profile once — height, weight, discipline, boot last width, current gear.</span></li>
+            <li><span class="n">02</span><span>Our model compares it against the listing's specs: flex, radius, boot volume, suit cut, wear level.</span></li>
+            <li><span class="n">03</span><span>You get a single confidence score plus a plain-language explanation of any risk — not a black box.</span></li>
+          </ul>
+        </div>
+        <div class="score-card">
+          <div class="top"><b>Lange RS 130, 26.5</b><span>Listing #4471</span></div>
+          <div class="score-big"><span class="num">91.4</span><span class="of">/ 100</span></div>
+          <div class="score-label">Fit Confidence Score</div>
+          <div class="score-bars">
+            <div class="score-bar-row"><span class="label">Boot volume</span><div class="score-bar-track"><div class="score-bar-fill" style="width:96%"></div></div><span class="pct">96%</span></div>
+            <div class="score-bar-row"><span class="label">Flex match</span><div class="score-bar-track"><div class="score-bar-fill" style="width:90%"></div></div><span class="pct">90%</span></div>
+            <div class="score-bar-row"><span class="label">Shell wear</span><div class="score-bar-track"><div class="score-bar-fill yellow" style="width:78%"></div></div><span class="pct">78%</span></div>
+          </div>
+          <div class="score-note">Shell shows moderate wear at the buckle mounts — seller has confirmed no cracking. Recommended for club/academy-level training and racing.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--white); border-top:1px solid var(--snow-2); border-bottom:1px solid var(--snow-2);">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Proof, not just photos</div>
+        <h2>Video proof for every listing.</h2>
+        <p>Every "Proof Run" is a short clip of the seller actually skiing on the exact gear in the listing — before it's boxed and shipped to you.</p>
+      </div>
+      <div class="proof-strip" id="home-proof-strip"></div>
+      <div style="margin-top:26px;"><button class="btn btn-dark" data-view="proof">See All Proof Runs</button></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Platform comparison</div>
+        <h2>A marketplace built for racing, not general resale.</h2>
+      </div>
+      <table class="compare-table">
+        <thead><tr><th>&nbsp;</th><th>LockerRoom</th><th>Generalist Marketplaces</th></tr></thead>
+        <tbody>
+          <tr><td>Seller fee</td><td class="hl">9% (5% for verified teams)</td><td class="no">13–15%</td></tr>
+          <tr><td>Fit intelligence for race gear</td><td class="yes">Yes — AI Fit Confidence</td><td class="no">Generic size charts</td></tr>
+          <tr><td>Video proof of gear in use</td><td class="yes">Proof Runs on every listing</td><td class="no">Photos only</td></tr>
+          <tr><td>Cross-border US ↔ Canada support</td><td class="yes">Built in</td><td class="no">Limited / manual</td></tr>
+          <tr><td>Built for racers by racers</td><td class="yes">Yes</td><td class="no">General sports audience</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- ============ BROWSE ============ -->
+<div class="view" id="view-browse">
+  <section style="padding-top:44px;">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Marketplace</div>
+        <h2>Browse Race Gear</h2>
+        <p>Every listing includes a Fit Confidence score against your racer profile.</p>
+      </div>
+      <div class="filter-bar">
+        <button class="active" data-filter="all">All Gear</button>
+        <button data-filter="Skis">Skis</button>
+        <button data-filter="Boots">Boots</button>
+        <button data-filter="Suits">Race Suits</button>
+        <button data-filter="Poles">Poles &amp; Protection</button>
+      </div>
+      <div class="grid" id="browse-grid"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ LISTING DETAIL ============ -->
+<div class="view" id="view-detail">
+  <div class="wrap">
+    <div class="breadcrumb"><button data-view="browse">← BACK TO THE RACK</button></div>
+    <div class="detail-wrap" id="detail-content"></div>
+  </div>
+</div>
+
+<!-- ============ PROOF RUNS ============ -->
+<div class="view" id="view-proof">
+  <section style="padding-top:44px;">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Video Verification</div>
+        <h2>Proof Runs</h2>
+        <p>Racers showing their gear in action before it's listed for sale. Tap a clip to jump straight to that listing.</p>
+      </div>
+      <div class="grid" id="proof-grid"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ SELL ============ -->
+<div class="view" id="view-sell">
+  <div class="sell-hero">
+    <div class="wrap">
+      <h1>Sell your gear to someone who'll use it.</h1>
+      <p>Add your listing, generate a Fit Confidence score, and optionally include a Proof Run to build buyer trust.</p>
+      <button class="btn btn-primary" onclick="document.getElementById('sell-form-anchor').scrollIntoView({behavior:'smooth'})">Start a Listing</button>
+    </div>
+  </div>
+  <section>
+    <div class="wrap">
+      <div class="steps3">
+        <div class="step-card"><div class="n">STEP 01</div><h3>Add the specs</h3><p>Brand, model, size, flex or last width, and honest wear condition. This feeds the Fit Confidence engine for every buyer who views it.</p></div>
+        <div class="step-card"><div class="n">STEP 02</div><h3>Add a Proof Run</h3><p>Upload a short clip of the gear being raced or trained on. Optional, but listings with Proof Runs sell faster and build buyer trust.</p></div>
+        <div class="step-card"><div class="n">STEP 03</div><h3>Ship &amp; get paid</h3><p>We handle cross-border US/Canada shipping labels and hold payment until the buyer confirms fit and condition.</p></div>
+      </div>
+
+      <div class="fit-panel" style="margin-top:32px; grid-template-columns:1fr; gap:20px;">
+        <div>
+          <h2 style="font-size:24px;">Selling for a team or academy?</h2>
+          <p style="max-width:600px;">Verified team and academy accounts pay a 5% fee instead of 9% — applied immediately once your account is verified, not after a waiting period. New team accounts get a free trial before any subscription billing begins.</p>
+          <ul class="fit-steps" style="max-width:600px;">
+            <li><span class="n">01</span><span>Request a team account and tell us about your program — we verify each one individually.</span></li>
+            <li><span class="n">02</span><span>Start listing right away at the 5% team rate during your free trial.</span></li>
+            <li><span class="n">03</span><span>After the trial, your subscription is invoiced directly — no card auto-charges while we're getting this right.</span></li>
+          </ul>
+          <button class="btn btn-ghost" onclick="alert('Prototype — team account requests aren\\'t wired up yet.')">Request a Team Account</button>
+        </div>
+      </div>
+
+      <div id="sell-form-anchor"></div>
+      <form class="sell-form" id="sell-form" onsubmit="handleListingSubmit(event)">
+        <div>
+          <label>Selling As</label>
+          <select id="sell-selling-as"><option>Individual — 9% fee</option><option>Verified Team / Academy — 5% fee</option></select>
+        </div>
+        <div>
+          <label>Category</label>
+          <select id="sell-category"><option>Skis</option><option>Boots</option><option>Race Suit</option><option>Poles</option><option>Protection</option></select>
+        </div>
+        <div>
+          <label>Discipline</label>
+          <select id="sell-discipline"><option>Slalom</option><option>Giant Slalom</option><option>Super G</option><option>Downhill</option></select>
+        </div>
+        <div>
+          <label>Brand</label>
+          <input type="text" id="sell-brand" placeholder="e.g. Atomic, Lange, Spyder">
+        </div>
+        <div>
+          <label>Model &amp; Size</label>
+          <input type="text" id="sell-model-size" placeholder="e.g. Redster S9, 165cm">
+        </div>
+        <div>
+          <label>Condition</label>
+          <select id="sell-condition"><option>Like New</option><option>Light Race Wear</option><option>Moderate Race Wear</option><option>Well Raced</option></select>
+        </div>
+        <div>
+          <label>Races Used This Season</label>
+          <input type="number" id="sell-races-used" placeholder="e.g. 12">
+        </div>
+        <div>
+          <label>Asking Price (USD)</label>
+          <input type="text" id="sell-price" placeholder="e.g. 480">
+        </div>
+        <div class="full">
+          <label>Fit Notes for the AI Engine</label>
+          <textarea rows="3" id="sell-fit-notes" placeholder="Boot last width, flex rating, binding DIN range, suit chest/waist measurements, etc."></textarea>
+        </div>
+        <div class="full">
+          <label>Photos</label>
+          <div class="upload-box"><b>Drop photos here</b>Clear shots of edges, boot shells, or suit fabric help buyers trust the listing. (Photo upload wiring is next — Proof Run video works today.)</div>
+        </div>
+        <div class="full">
+          <label>Proof Run (optional)</label>
+          <div class="upload-box">
+            <b>Upload a short clip</b>Show this exact gear being raced or trained on. Boosts buyer confidence and search ranking.
+            <input type="file" id="sell-proof-input" accept="video/*" style="margin-top:14px;" onchange="onProofRunFileSelected(this)">
+          </div>
+          <div id="sell-proof-preview"></div>
+        </div>
+        <div class="full">
+          <button class="btn btn-primary" type="submit">Submit Listing — 9% Fee on Sale (5% for Verified Teams)</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs><clipPath id="lrClipFoot"><rect x="0" y="0" width="100" height="100" rx="24"/></clipPath></defs>
+          <g clip-path="url(#lrClipFoot)">
+            <rect width="100" height="100" fill="#0A0B0D"/>
+            <polygon points="0,80 60,0 100,0 100,24 40,100 0,100" fill="#1E4FD6"/>
+            <circle cx="80" cy="20" r="6" fill="#FFFFFF"/>
+            <text x="42" y="70" font-family="Oswald, sans-serif" font-weight="700" font-size="48" fill="#FFFFFF" text-anchor="middle" letter-spacing="-1">LR</text>
+          </g>
+        </svg>
+        LockerRoom
+      </div>
+      <p class="tag">Lower fees, real fit data, and video proof — resale built for how racers actually buy and sell gear.</p>
+    </div>
+    <div class="cols">
+      <div class="col">
+        <h4>Marketplace</h4>
+        <a href="#" data-view="browse">Browse Gear</a>
+        <a href="#" data-view="sell">Sell Your Gear</a>
+        <a href="#" data-view="proof">Proof Runs</a>
+      </div>
+      <div class="col">
+        <h4>Company</h4>
+        <a href="#">About</a>
+        <a href="#">Academies &amp; Teams</a>
+        <a href="#">Trust &amp; Safety</a>
+      </div>
+    </div>
+  </div>
+  <div class="bottom">LockerRoom — Prototype concept. Not a live marketplace.</div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/backend.js"></script>
+<script src="js/fit-confidence.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
